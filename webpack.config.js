@@ -5,16 +5,23 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
 var UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
+var webpack_config_data = require('./Create_Webpack_Config_Data.js');
+var entries = []
+
+
+console.log( (new webpack_config_data()).get_entry_html('./Src') )
 
 const debug = process.env.NODE_ENV !== 'production';
 
 
-
-var entries = getEntry('Src/Js/Index.js');//搜索主js
+entries = (new webpack_config_data()).get_entry_js('./Src');
+//var entries = getEntry('Src/Js/index.js');//搜索主js
 //var entries = getEntry('src/js/**/*.js', 'src/js/');//搜索所有主js
-entries['lib'] =['jquery','underscore','k-logging','k-report','thunderjs']; //说明lib模块
+entries['lib'] =['jquery','k-logging','k-report']; //说明lib模块
 
 //var entries = getEntry('src/js/**/*.js');
+entries[ 'index' ] = ['webpack-hot-middleware/client', entries[ 'index' ]] 
+console.log( entries);
 
 var chunks = Object.keys(entries);
 var config = {
@@ -40,12 +47,13 @@ var config = {
               //include: __dirname + '/Src',
           },*/
       {
-        test: /\.css$/,
+        test: /\.scss$/,
         //loaders: ['style','css']
-        loader: ExtractTextPlugin.extract('style', 'css')
+        loaders: ['style','css','sass']
+        //loader: ExtractTextPlugin.extract('style', 'css','sass')
       }, {
         test: /\.(html|tpl)$/,
-        loader: 'html'
+        loader: 'html?minimize=false'
         //loader: "html?-minimize" //避免压缩html,https://github.com/webpack/html-loader/issues/50
       }, {
         test: /\.(woff|woff2|ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
@@ -55,7 +63,7 @@ var config = {
         //loader: 'url-loader?limit=819'
         loader: 'url-loader?limit=819&name=images/[name].[ext]'
       }, {
-        test: /\.mp4$/,
+        test: /\.(mp4|swf)$/,
         loader: 'file?name=video/[name].[ext]'
       }
     ],
@@ -69,72 +77,26 @@ var config = {
       chunks: chunks,
       //minChunks: chunks.length // 提取所有entry共同依赖的模块
     }),
-    new ExtractTextPlugin('css/[name].css'), //单独使用link标签加载css并设置路径，相对于output配置中的publickPath
-    debug ? function() {} : new UglifyJsPlugin({ //压缩代码
+    new ExtractTextPlugin('css/[name].css'), ///单独使用link标签加载css并设置路径，相对于output配置中的publickPath
+   debug ? function() {} : new UglifyJsPlugin({ //压缩代码
       compress: {
-        warnings: false
-      },
-      except: ['$super', '$', 'exports', 'require'] //排除关键字
+        warnings: false,
+        screw_ie8: false
+
+      }, 
+      mangle: false,
+            output: { screw_ie8: false },
+      //except: ['$super', '$', 'exports', 'require'] //排除关键字
     }),
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin()
   ]
 };
 
-
-var pages = Object.keys(getEntry('src/**/*.html'));
-pages.forEach(function(pathname) {
-  var conf = {
-    filename: '' + pathname + '.html', //生成的html存放路径，相对于path
-    template: 'src/' + pathname + '.html', //html模板路径
-    inject: false, //js插入的位置，true/'head'/'body'/false
-    /*
-     * 压缩这块，调用了html-minify，会导致压缩时候的很多html语法检查问题，
-     * 如在html标签属性上使用{{...}}表达式，很多情况下并不需要在此配置压缩项，
-     * 另外，UglifyJsPlugin会在压缩代码的时候连同html一起压缩。
-     * 为避免压缩html，需要在html-loader上配置'html?-minimize'，见loaders中html-loader的配置。
-     */
-     minify: { //压缩HTML文件
-      removeComments: false, //移除HTML中的注释
-      collapseWhitespace: false //删除空白符与换行符
-     }
-  };
-  if (pathname in config.entry) {
-    //conf.favicon = path.resolve(__dirname, 'src/imgs/favicon.ico');
-    conf.inject = 'body';
-    conf.chunks = ['lib', pathname];
-    conf.hash = true;
-  }
-  config.plugins.push(new HtmlWebpackPlugin(conf));
-});
-
-console.log(JSON.stringify(config))
+ (new webpack_config_data()).get_entry_html('./Src').forEach(element => {
+  console.log(element)
+    config.plugins.push(new HtmlWebpackPlugin(element));
+ })
 
 module.exports = config;
-
-function getEntry(globPath, pathDir) {
-  var files = glob.sync(globPath);
-  var entries = {}, //pathname
-    entry, dirname, basename, extname;
-  //debugger;
-  //console.log("files: "+ JSON.stringify(files));
-  for (var i = 0; i < files.length; i++) {
-    entry = files[i];
-    
-    //debugger;
-    dirname = path.dirname(entry); //获取文件路径
-    extname = path.extname(entry); //获取文件后缀
-    basename = path.basename(entry, extname); //获取文件基本名称
-    //console.log("basename: "+ basename);
-    //pathname = path.normalize(path.join(dirname,  basename)); //组合路径 这里得到的是entery去掉后缀后的绝对路径
-    //pathDir = path.normalize(pathDir);
-    //console.log(pathDir);
-    //if(pathname.startsWith(pathDir)){ //这里感觉是对glob的不信任啊.....
-    //  pathname = pathname.substring(pathDir.length)
-    //}
-    //console.log("pathname: "+ pathname);
-
-    
-    entries[basename] = ['./' + entry];
-  }
-  console.log("entries: "+ JSON.stringify(entries));
-  return entries;
-}

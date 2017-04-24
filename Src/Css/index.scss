@@ -1,0 +1,161 @@
+body, html{
+    height: 100%;
+    //background: #000;
+}
+
+header{
+    position: fixed;
+    padding-top: 20px;
+    padding-left: 10%;
+
+    h1{
+        font-size: 30px;
+        color: #000;
+    }
+}
+
+.first_page{
+    background-image: url('../Images/Empire-State-Building.jpg');
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.open_source{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+
+}
+
+.my_info{
+    img{
+        width: 100px;
+        height: 100px;
+        border-radius: 100%;
+
+    }
+    ul{
+        display: flex;
+        flex-direction: column;
+        width: 80%;
+        padding-left: 10%;
+        padding-right: 10%;   
+        li{
+            padding-left: 21%;
+            //width: 100%;
+        }
+    }
+}
+
+.history{
+    ul{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding-left: 10%;
+        padding-right: 10%;
+        width: 80%;
+        li{
+            position: relative;
+            padding-right: 5%;
+            img{
+                position:relative;
+                z-index: 1;
+            }
+            hr{
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                margin: auto;
+                
+                height: 1px;
+                line-height: 1px;
+                background: #ddd;
+                //color: #ddd;
+                //font-size: 0;
+                border: none 0;
+                width: 150%;
+
+
+                
+            }
+            
+        }
+        img{
+            width: 100px;
+            height: 100px;
+            border-radius: 100%;
+        }
+    }
+}
+
+.section_box{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.list {
+    display: flex;
+    //justify-content: space-between;
+    padding-left: 10%;
+    padding-right: 10%;
+    width: 80%;
+    flex-wrap: wrap;
+    li{
+        img{
+            width: 100%;
+        }
+        width: 18%;
+        padding-left: 1%;
+        padding-right: 1%;
+        @media screen and (max-width: 1024px) {
+            width: 48%
+        }
+        //flex-grow: 1;
+    }
+}
+
+.section_box{
+    h1{
+        height: 100px;
+        line-height: 100px;
+    }
+}
+
+footer{
+    padding-top: 30px;
+    padding-bottom: 30px;
+    background-color: #2a2730;
+    p{
+        color: #FFF;
+        text-align: center;
+    }
+}
+
+body {
+    margin: 0;
+}
+
+textarea {
+    resize: none;
+}
+
+ul {
+    list-style: none;
+    -webkit-padding-start: 0;
+}
+
+a {
+    color: #FFF;
+    text-decoration: none;
+}
+
+h1 {
+    margin: 0
+}
