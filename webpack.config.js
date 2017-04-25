@@ -20,7 +20,7 @@ entries = (new webpack_config_data()).get_entry_js('./Src');
 entries['lib'] =['jquery','k-logging','k-report']; //说明lib模块
 
 //var entries = getEntry('src/js/**/*.js');
-entries[ 'index' ] = ['webpack-hot-middleware/client', entries[ 'index' ]] 
+//entries[ 'index' ] = ['webpack-hot-middleware/client', entries[ 'index' ]] 
 console.log( entries);
 
 var chunks = Object.keys(entries);
