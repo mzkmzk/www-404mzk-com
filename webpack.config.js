@@ -6,12 +6,16 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
 var UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 var webpack_config_data = require('./Create_Webpack_Config_Data.js');
+var QiniuPlugin = require('k-qiniu');
+var package = require('./package');
+var env = require('./.env.js')
 var entries = []
 
 
 console.log( (new webpack_config_data()).get_entry_html('./Src') )
 
 const debug = process.env.NODE_ENV !== 'production';
+const publicPath = 'http://publish.404mzk.com/static/' + package.name + "/" + package.version +"/"
 
 
 entries = (new webpack_config_data()).get_entry_js('./Src');
@@ -28,7 +32,7 @@ var config = {
   entry: entries,
   output: {
     path: path.join(__dirname, 'public'),
-    //publicPath: '/v2017/k_pc/public/',
+    publicPath,
     filename: 'js/[name].js',
     chunkFilename: 'js/[id].chunk.js?[chunkhash]'
   },
@@ -90,7 +94,21 @@ var config = {
     }),
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
+    new webpack.NoErrorsPlugin(),
+    new QiniuPlugin({
+
+      // 七牛云的两对密匙 Access Key & Secret Key
+      accessKey: env.qiniu_access_key,
+    
+      secretKey: env.qiniu_secret_key,
+    
+      // 七牛云存储空间名称
+      bucket: 'publish',
+      
+      // 上传到七牛后保存的文件名
+      path: 'static/[name]/[version]/[asset]'
+
+    })
   ]
 };
 

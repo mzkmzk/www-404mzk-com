@@ -1,5 +1,7 @@
 var webpack = require('webpack');
 var webpackConfig = require('./webpack.config');
+webpackConfig.entry[ 'index' ] =  ['webpack-hot-middleware/client',webpackConfig.entry[ 'index' ]] 
+
 var compiler = webpack(webpackConfig);
 var http = require('http');
 
@@ -14,11 +16,11 @@ app.use(require("webpack-hot-middleware")(compiler, {
   }));
 
 app.get("/", function(req, res) {
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/public/index.html');
 });
 if (require.main === module) {
   var server = http.createServer(app);
-  server.listen(process.env.PORT || 3333, function() {
+  server.listen(process.env.PORT || 4444, function() {
     console.log("Listening on %j", server.address());
   });
 }
