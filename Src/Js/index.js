@@ -11,13 +11,13 @@ try{
       {
         app_key: '404mzk',
         open_level : ['info','warn','error'],
-        method: ['console','', ''],
+        method: ['','', ''],
         switch_listener: true
       }
 )
 }catch(e){
-     console.log(e)
-  console.log('k_loggin error');
+    // console.log(e)
+  //console.log('k_loggin error');
 }
 
 //header
@@ -55,6 +55,6 @@ try{
     }}
 )
 }catch(e){
-    console.log(e)
-  console.log('k_report error');
+   // console.log(e)
+  //console.log('k_report error');
 }

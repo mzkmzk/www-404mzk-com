@@ -7,15 +7,25 @@ var CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
 var UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 var webpack_config_data = require('./Create_Webpack_Config_Data.js');
 var QiniuPlugin = require('k-qiniu');
-var package = require('./package');
+var _package = require('./package.json');
 var env = require('./.env.js')
 var entries = []
 
 
 console.log( (new webpack_config_data()).get_entry_html('./Src') )
 
-const debug = process.env.NODE_ENV !== 'production';
-const publicPath = 'http://publish.404mzk.com/static/' + package.name + "/" + package.version +"/"
+
+
+
+var __DEV__ = process.env.NODE_ENV !== 'production',
+    __SERVER__ = process.env.NODE_ENV === 'SERVER',
+    public_path
+
+if ( !__DEV__  ) {
+  public_path =   'http://publish.404mzk.com/static/' + _package.name + "/" + _package.version +"/";
+}else{
+  public_path = '/'
+}
 
 
 entries = (new webpack_config_data()).get_entry_js('./Src');
@@ -25,14 +35,14 @@ entries['lib'] =['jquery','k-logging','k-report']; //说明lib模块
 
 //var entries = getEntry('src/js/**/*.js');
 //entries[ 'index' ] = ['webpack-hot-middleware/client', entries[ 'index' ]] 
-console.log( entries);
 
+ //entries[ 'index' ] = ['webpack-hot-middleware/client', entries[ 'index' ]] 
 var chunks = Object.keys(entries);
 var config = {
   entry: entries,
   output: {
     path: path.join(__dirname, 'public'),
-    publicPath,
+    publicPath : public_path,
     filename: 'js/[name].js',
     chunkFilename: 'js/[id].chunk.js?[chunkhash]'
   },
@@ -53,22 +63,26 @@ var config = {
       {
         test: /\.scss$/,
         //loaders: ['style','css']
-        loaders: ['style','css','sass']
-        //loader: ExtractTextPlugin.extract('style', 'css','sass')
+        //loaders: ['style','css','sass']
+        loader: ExtractTextPlugin.extract('style', 'css!sass')
+      },{
+        test: /\.css$/,
+        loaders: ['style','css']
+        //loader: ExtractTextPlugin.extract('style', 'css')
       }, {
         test: /\.(html|tpl)$/,
         loader: 'html?minimize=false'
         //loader: "html?-minimize" //避免压缩html,https://github.com/webpack/html-loader/issues/50
       }, {
         test: /\.(woff|woff2|ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'file-loader?name=fonts/[name].[ext]'
+        loader: 'file-loader?name=fonts/[name].[ext]?[hash]'
       }, {
         test: /\.(png|jpe?g|gif)$/,
         //loader: 'url-loader?limit=819'
-        loader: 'url-loader?limit=819&name=images/[name].[ext]'
+        loader: 'url-loader?limit=819&name=images/[name].[ext]?[hash]'
       }, {
         test: /\.(mp4|swf)$/,
-        loader: 'file?name=video/[name].[ext]'
+        loader: 'file?name=video/[name].[ext]?[hash]'
       }
     ],
      /*postLoaders: [
@@ -81,8 +95,8 @@ var config = {
       chunks: chunks,
       //minChunks: chunks.length // 提取所有entry共同依赖的模块
     }),
-    new ExtractTextPlugin('css/[name].css'), ///单独使用link标签加载css并设置路径，相对于output配置中的publickPath
-   debug ? function() {} : new UglifyJsPlugin({ //压缩代码
+    new ExtractTextPlugin('css/[name].css?[contenthash]'), ///单独使用link标签加载css并设置路径，相对于output配置中的publickPath
+   __DEV__ ? function() {} : new UglifyJsPlugin({ //压缩代码
       compress: {
         warnings: false,
         screw_ie8: false
@@ -93,9 +107,9 @@ var config = {
       //except: ['$super', '$', 'exports', 'require'] //排除关键字
     }),
     new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
+    __SERVER__ ? new webpack.HotModuleReplacementPlugin() : () => {},
     new webpack.NoErrorsPlugin(),
-    new QiniuPlugin({
+    __DEV__ ? function(){} : new QiniuPlugin({
 
       // 七牛云的两对密匙 Access Key & Secret Key
       accessKey: env.qiniu_access_key,
@@ -116,5 +130,5 @@ var config = {
   console.log(element)
     config.plugins.push(new HtmlWebpackPlugin(element));
  })
-
+console.log( config);
 module.exports = config;
