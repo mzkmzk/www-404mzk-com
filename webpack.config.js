@@ -43,8 +43,8 @@ var config = {
   output: {
     path: path.join(__dirname, 'public'),
     publicPath : public_path,
-    filename: 'js/[name].js',
-    chunkFilename: 'js/[id].chunk.js?[chunkhash]'
+    filename: 'js/[name]-[chunkhash:4].js',
+    //chunkFilename: 'js/[id].[chunkhash].js'
   },
   module: {
     loaders: [ //加载器
@@ -75,14 +75,14 @@ var config = {
         //loader: "html?-minimize" //避免压缩html,https://github.com/webpack/html-loader/issues/50
       }, {
         test: /\.(woff|woff2|ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'file-loader?name=fonts/[name].[ext]?[hash]'
+        loader: 'file-loader?name=fonts/[name]-[hash:4].[ext]'
       }, {
         test: /\.(png|jpe?g|gif)$/,
         //loader: 'url-loader?limit=819'
-        loader: 'url-loader?limit=819&name=images/[name].[ext]?[hash]'
+        loader: 'url-loader?limit=819&name=images/[name]-[hash:4].[ext]'
       }, {
         test: /\.(mp4|swf)$/,
-        loader: 'file?name=video/[name].[ext]?[hash]'
+        loader: 'file?name=video/[name]-[hash:4].[ext]'
       }
     ],
      /*postLoaders: [
@@ -95,7 +95,7 @@ var config = {
       chunks: chunks,
       //minChunks: chunks.length // 提取所有entry共同依赖的模块
     }),
-    new ExtractTextPlugin('css/[name].css?[contenthash]'), ///单独使用link标签加载css并设置路径，相对于output配置中的publickPath
+    new ExtractTextPlugin('css/[name]-[contenthash:4].css'), ///单独使用link标签加载css并设置路径，相对于output配置中的publickPath
    __DEV__ ? function() {} : new UglifyJsPlugin({ //压缩代码
       compress: {
         warnings: false,

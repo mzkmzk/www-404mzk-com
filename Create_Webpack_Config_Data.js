@@ -70,7 +70,7 @@ Create_Webpack_Config_Data.prototype.get_entry_html = function(glob_path){
                         },
                         inject: 'body',
                         chunks: chunks,
-                        hash: true
+                        hash: false
                      }
                 
             })
