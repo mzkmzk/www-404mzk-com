@@ -67,8 +67,12 @@ header{
         justify-content: center;
         li{
             position: relative;
-            padding-right: 5%;
+            //padding-right: 5%;
+            padding:0 2%;
+            text-align:center;
+            min-width:100px;
             div{
+                display: inline-block;
                 position:relative;
                 z-index: 1;
                 border-radius: 100%;
@@ -103,7 +107,7 @@ header{
                 
             }
             p{
-                text-align: center;
+                /*text-align: center;*/
             }
             
         }
@@ -126,10 +130,13 @@ hr{ display: none}
         justify-content: center;
         li{
             position: relative;
-            padding-right: 5%;
+            margin: 0 2.5%;
+            text-align:center;
+            box-sizing: content-box;
+            //padding-right: 5%;
             div{
                 position:relative;
-                
+                display: inline-block;
             }
             img{
                 position:relative;
