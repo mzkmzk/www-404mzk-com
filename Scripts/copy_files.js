@@ -16,6 +16,7 @@ Promise.all(
 function copyFile(file) {
   const buildPath = resolveBuildPath(file);
   return new Promise((resolve) => {
+    console.log(file, buildPath)
     fse.copy(
       file,
       buildPath,
